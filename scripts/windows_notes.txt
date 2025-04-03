@@ -1,0 +1,26 @@
+#  Start Xquartz and ensure that "Allow connections from network clients" is enabled in settings:Security.  After you do
+#  so restart Xquartz to load the settings (DUMB)
+# 
+#  then set xhost 
+   xhost + 127.0.0.1     # ON the Mac host
+#
+#  create a docker bridge so that this instance can talk with another instance
+#  First time it creates a bridge.  Other times just ignore the warning.  It's there and will connect :)
+docker network create -d bridge my-net 
+# then running is simple.  This will allow GUI use on OSx and will 
+#  mount the vibb_sim directory in scratch for editing.  Use VSCode and pallet to select DEV containers: Open folder..
+    docker run -it --network=my-net --mount type=bind,src=C:\Users\njpon\Downloads\vibbSim\vibbSim-tmtccmd,dst=/scratch/vibb_simulator -e DISPLAY=host.docker.internal:0 vibb-sim
+#command for EC2 instance
+    docker run -it --network=my-net --mount type=bind,src=/home/ec2-user/app/vibbSim/vibbSim-tmtccmd,dst=/scratch/vibbsim -e DISPLAY=host.docker.internal:0 vibbsim
+# Check that it is working by running xclock
+#   xclock
+
+
+# For Nathaniel's Machine (Windows 11)
+# 1. Install X Server app such as Xming or VcXsrv (I used VcXsrv)
+# 2. MAKE SURE TO USE BASH TERMINAL
+# 3. use command "echo $DISPLAY"
+# 3a. if it's empty, use command "export host.docker.internal:0"
+# 3b. use command "echo $DISPLAY" to make sure that the env DISPLAY variable is "host.docker.internal:0"
+# 4. run the "docker run ... " command shown above
+# 4a. if you're already at the base directory, then "src=." also works
